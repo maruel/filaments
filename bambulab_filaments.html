@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<script>
+    // https://docs.google.com/spreadsheets/d/1B-xYd8NSv7YMvTSY_9pu-ybffDbkbXwGCCEWE9-wv5Y/edit?gid=0#gid=0
+
+    const countries = {
+        "Asia": ["$USD", "asia", "A4"],
+        "Australia": ["$AUD", "ca", "Letter"],
+        "Canada": ["$CAD", "au", "A4"],
+        "Europe": ["€", "eu", "A4"],
+        "Korea": ["₩", "kr", "A4"],
+        "Japan": ["¥", "jp", "A4"],
+        "UK": ["£", "uk", "A4"],
+        "USA": ["$USD", "us", "Letter"],
+    };
+
+    // List of keys to catch typos.
+    const filament_data_keys = [
+        "product_path",
+        // Current price on each store.
+        "price",
+        // g/cm³
+        "density",
+        // °C
+        "heat_resistance",
+        // %
+        "saturated_water",
+        // Pascal
+        "youngs_modulus_xy",
+        "youngs_modulus_z",
+        "tensile_strength_xy",
+        "tensile_strength_z",
+        "bending_modulus_xy",
+        "bending_modulus_z",
+        "bending_strength_xy",
+        // kj/m²
+        "bending_strength_z",
+        "impact_strength_xy",
+        "impact_strength_z",
+        // On a 1 to 5 scale
+        "uv_resistance",
+        // boolean
+        "drying_required",
+        // boolean
+        "compatibility",
+        /*: [
+            "ams",
+            "ams_lite",
+            "liquid_glue",
+            "cool_plate",
+            "textured_pei",
+            "hot_plate"
+        ],
+        */
+        // In kj/m²
+        "layer_adhesion",
+        // List of compatible nozzles
+        "nozzle",
+        // mm/s
+        "print_speed",
+        // mm³/s
+        "max_volumetric_flow",
+        "annealing"
+    ];
+
+    const filaments = {
+        "PLA Basic": {
+            "product_path": "pla-basic-filament",
+            "price": {
+                "Asia": [23, 15],
+                "Australia": [36, 23],
+                "Canada": [30, 20],
+                "Europe": [26, 17],
+                "Korea": [33000, 22400],
+                "Japan": [3400, 2100],
+                "UK": [21, 14],
+                "USA": [23, 15],
+            },
+            "density": 1.24,
+            "heat_resistance": 57,
+            "saturated_water": 0.43,
+            "youngs_modulus_xy":  2580000000,
+            "youngs_modulus_z":   2000000000,
+            "tensile_strength_xy":  35000000,
+            "tensile_strength_z":   31000000,
+            "bending_modulus_xy": 2750000000,
+            "bending_modulus_z":  2370000000,
+            "bending_strength_xy":  75000000,
+            "bending_strength_z":   59000000,
+            "impact_strength_xy": 26,
+            "impact_strength_z": 13.8,
+            "uv_resistance": false,
+            "drying_required": false,
+            "compatibility": {
+                "ams": true,
+                "ams_lite": true,
+                "liquid_glue": true,
+                "plates": ["cool", "hot", "textured"],
+            },
+            "layer_adhesion": 13.8,
+            "nozzle": [0.2, 0.4, 0.6, 0.8],
+            "print_speed": 300,
+            "max_volumetric_flow": 21,
+            "annealing": "55°C, 8h"
+        },
+        "PLA Matte": {
+            "product_path": "pla-matte",
+            "price": {
+                "Asia": [23, 15],
+                "Australia": [36, 23],
+                "Canada": [30, 20],
+                "Europe": [26, 17],
+                "Korea": [33000, 22400],
+                "Japan": [3400, 2100],
+                "UK": [21, 14],
+                "USA": [23, 15],
+            },
+            "density": 1.31,
+            "heat_resistance": 58,
+            "saturated_water": 0.43,
+            "youngs_modulus_xy":  1960000000,
+            "youngs_modulus_z":   1670000000,
+            "tensile_strength_xy":  30000000,
+            "tensile_strength_z":   22000000,
+            "bending_modulus_xy": 2360000000,
+            "bending_modulus_z":  1770000000,
+            "bending_strength_xy":  53000000,
+            "bending_strength_z":   29000000,
+            "impact_strength_xy": 19.2,
+            "impact_strength_z": 6.6,
+            "uv_resistance": false,
+            "drying_required": false,
+            "compatibility": {
+                "ams": true,
+                "ams_lite": true,
+                "liquid_glue": true,
+                "plates": ["cool", "hot", "textured"],
+            },
+            "layer_adhesion": 13.8,
+            "nozzle": [0.2, 0.4, 0.6, 0.8],
+            "print_speed": 300,
+            "max_volumetric_flow": 22,
+            "annealing": "55°C, 8h"
+        }
+    };
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Filaments sheet</title>
+<!-- Spool icon https://www.flaticon.com/free-icon/spool_7623689 by Slidicon -->
+<link rel="icon" href="data:image/x-icon;base64,iVBORw0KGgoAAAANSUhEUgAAAIAAAACACAQAAABpN6lAAAAACXBIWXMAAAOwAAADsAEnxA+tAAAAGXRFWHRTb2Z0d2FyZQB3d3cuaW5rc2NhcGUub3Jnm+48GgAAEjpJREFUeNrtnWec1NW5x7/swsLu0hbxArKoCAYNLE0QjBRBEPBKM0FRqeYqJiiEENioURH0gqDYIuVaopEorCDN4BojoUkvKh1pYuhFYBuLsJMXLjPPKf82M4DJ5cyb+cw55zn9Kb/nOWfgUrqULqVL6f9xKnER2izJFVxOEqmUpTRQSC65FHKE/Zz5T52ANJrRmFrUpCbplHQodYZv2cUudrKW5Rz/T5iAmnSgOc2oE7ilEFtYwXL+xq5/z8NVl0yWUEQo5s9GxtDiohzWKFMNRrE7DgNXPzsZSfUfP0u9jZmcCTCsU5wKUPp7ZtAuvnshfsQS6cOjXOtS4gTr2FX82U8ehWE2l0ZpUqlGzeJPI8q70NnKaKZw9se18neyyeUMT6Y/PyXBN70E6nI/r7vQ3EC3Hw9XaMtKayfPsJih1IqJdm2G8TlnrfSXc8vFH3wl3rF2bjOD+a+4tVKVIWy1tvMn0i7m8O/gn5Z1nxtvRlWcWpDFaaO9A/z84gy+MtMsXPr/qOGrdnn6MJ3N5JLLZqbT25XtRdJVvGmRMu9T+UIPvwG7tE4UkcVPfNoCv+GwMYhDDCLRV/06ZBkK1rc0uZDD70mewZAa+6xbno8cefsnvk90E4Px5nH3hRJ5I7T5zyfT59pBWda5qjprSfVtUw4mV6v9su9+RJ2SmKk1ushV+dHTDE9tLysAtTos0WrPJOl8Dr80c7VzPyKAegOdNO1+DP3ox3MaP7ktAMUERmr7cS6lz9/w5yhN5XBnQAqrRe1xYq2SeEHkrAwsjI8r/fqYMhdi9bdTLyCFWqL2n43cv4jcawJSrsNmjZkmx3v4CdrZX0mlwDQeFspSupF7pZDvv45CI12l9G9GvFWxZxXyq6MYPmKbr7bmrw3nPx8F9QosU/r4dDyH/wuF0Xxu1doSSfM4e++GKcyy5s8O57/rcRjTrKhiBZYqDLpnvIbfhHxBeAnltPyWTGYrZwhRxG6m0MVBGr8WpvEPa/6CcP4fHST/nUxlDyFCnGYTE/iZoWQtU1SjxvEYfmW+VURXZQ35W2SR5Zu41ULp8XD+ScteSSYnnP+opXZHqz04n+uVUpcrInVPPGzFLEXwZSh591DgoM4UMcKg1FLkDzZyfytybza0z2cd4dU87lLK/pQTIvftWIf/S0HsLF2UvLscgIpzn2cNLnFQdLu1ktdGHLMDhnL1nGs7Z+ihlO6uTNZ/xzL8anwnSP1B2/wFnmqtrigNF3mneYUbSSWVZryq2PlDtVp3e7aTz3VKjadE3j+pGP0ETBWElmmsbaHShS28yhiminMcIsQ+UrRzvsNzMF9r/KEcB5T8ZbzAWObxvfLrZ5rWIm2EN6Md/q2CSIE2xzeLvFz6htWOSkLYhQgxUKOpnlDzo3MZGKwwtdYCLVQNoeZaO6cEP2odne63RpAfpuVOFHl9tbzJIm+pQbcNRx2Hf8TS1VXi0DRScsooU/CqVu9RkbcukMlWnPoqcEeigc1HNr+udKYIwfm9dgh+WLvF1uEvtCDIFQSjfc9CKXIQ1htag1SO7wvu5tgmqjcziJ8WIIS74lzfSr8LswXfz2MWd1jLNXbZaQDZ4dxCYyGaCmmw3dEj7WP9Z1hgrUjuKEvtHiK/pWMbKdSjIx2pZ9klkQMTodTNkj9a5JtUZkW7B0oI8/IsdS3aeGRup1rq3ycajg2sbO7ChwDGi36aCniGOEAbg9iHt7ta7oDw/uZYLMMJon5symhlQekLCytbITa5LU2JDmmaJ5iY3bX1niCs227VhTawIWZVXFoAQ7S8tiLvHWttySbn+m3yGrHBP3Qo003h35MFAlNdscieinkCRilK7xCxC24otgzdVd6Z4pBc5a/JEYJsR0cpsUlzTDxDT3oxkZOKWlPFsZUyZNCOrnSlHfVckIQqmg/iSzLpwS+ZpuiCGxwlvTzOj/tjgNvDFb5xwdnb+wh/+Z0VzujOJLZohtRZtjCRblZQO9OznbO0dVHoIvxqmx9G2MzR/HHbnLbPTGNVavCiix4YIsRRxht4YYIGx5qfJ1z7+WQwmTRaMMArPMqOcR1+aU2ne5lCX4EwhYzXQLcyGiCvIg+jPHqZLuDWUd4TsMUDuNLRwr2WTuUyVNtsHdgXKCRqL+21XTBcszTPlevmo5eLHRVmV+x+uC+WmcpAVgiGtIkRGusrwUgP6MR+rp/SJrEaTwkF7QzLGOjTkygNIw9J8IAomhFAWJWlPm1oYlGKEnnLGNxxPmAgrUgnmWTSacXDzND8OyFCvGFhwpfRmLY08O1EBWgkaPZ3L/qeEGzxcC2UMIb/Bb0chF4yvfnSmIL49GKvT8hdFHwjLpD6SM3e7+0xoAT6ckyp82Rc+vGWAFVcUnXRcI84NNtBOfvLPaXKuV6sVHhBuzj0pKegWNW5WPcYHJRYjGbJ+T8N4LBM4TMF1iwXc1+uFfQ6q6dDpmfCymIOFQhZpURHalGF79jPIpa6xmu+JND/tbQkP0CHU1klXB7jDaRYZbM305JqpHGQHWSzw3q0TobZ5tMWn0Vx+lA4wMzUSfHvhwhxkOGO61pDqD0n/JohIjUQsPspxzDpZDI5pPVqFR0sJZf7iUGJGDgTDDE33UFe73AQly+JMo9EtW1/Jyi84DBJOx0DbVIdoVpHZaikWLOHlJw019CmHNoYtJI4Ijw90UVslBE85Kgl8KWtVTeMhFupDpGBYj85mHhXi+otlDM2z0NrO2oESkl2mhk163pMUOlioBaHPXr1NwUIbS1yrrQ319JBBvxG88StYhYLNAfHYo3WJFG+UtQTUFmIUf1QLtF0ywXMYpUWRfqIgxz4mb25e0SRskKYHVaCk6uGN/mvFKiis4NJtTIm8bVG2BgqrC5NrwFhHKGaErx9SAjQCuL3u+yN/VY4GyOpj6g4XqtxizCCZiu8ObJyo2OagHFiJ0lOMkcY7a20Oq+IHvcSvxe4OOc1gGO3+HW6UCKTXPDffCEQM0QXYgtUkQB7XaEo5Tu6xKC0iGGXIm+PLX5IYjYRrnlIwdbPpamcNhp7R6x67fB3eVPgUEwTIGtfLrDeyGSbsH0h0yy9h4OWkfqYgIj+boO4Nyg6fERrOB8TUN7SEmx07VW6lVaafQJKhb/JC6whB7XZ/K0o/O177C1EY8hioRryXatI/HpGCHZr9yIFpPGxP/zNFhmaYS15xLpxo0n2w7TPoQdmT/dZd1CB1wTILbxemJSmNhbx2OYL59RBhyHENgERqtvFEPpYNMielt7LZS0IsgNmi/M01lBG/yf8/VNBdg8nhb4eS2oY/naCvWKy/x7+/qBxd+x5qll6L5e1wN7Y8wIOk/N2SHGVXhEWNg8rAZSqf3+psM1iSWsddM3OSqDcr8N7s7oSdH1Q2cv7XB02yBiuHOX3QZoqvIZZLFRcYCEWuigwl8VwAJwVKjVA8wQLmcUaDX0eqDDGPKt6JFI/B9go0eWWzzljqLZGq53IfTTqCXhCUNH1vZqextAnitUn4T4HR5q8z6Geq4piK5qfk5bQpiRxcKI1h1NEYOV+S4jLLdouDGkR7RU0fhXJu87e4E9EkQEGRJXlGNdXz4OjhFwBLecknaJjrCUyhCNXv0moB8z8SkSblXICRE45mj0At4l4jHNrO9RxdWuJQKqCKGRBI9GbQq52BE2GaYGUIZZrbjUdodrgDIpuCBsc2XSyNliTTsWg6D4WsUzRtDBAqAfD3zfTlLwAwy/LKrFRJxgBlyooehOtqEYaB9hBtsOTG9lhpHC6M+QfuQx7LA438KopLo75LrFgJia8QHGnVIm5L4ki6vkx52IS+7khDu6IvhpbSvdV60qN5d4bh57c6MjgldTUIygteHpTGcp33O9hHCXygOYknRSXfvxeAChlnYuVEsrCx3FpOIm/ayxqPX0dDkMK/dhoyPJScelHtl/NNFtog0GaLs313MD1FswohU8tmsNMBtGGGqSQwpW0ZTCzLCB3tsXtkkZjbqR2IB6VJG4Ze8SIDHTU7p29Cb2ZH8bbvmcxD2rdLukaSuP8maxNZ3keY11Y2S1gJl19Os+7usQ9GwwoUnSaD9JtrarIbrpr5XoaDiz3z0F+YSgyxyzllvrSMKYLup4AzRdCfanogbv8weXNoGe11anMyz7fDCrgRc2ASlFsPP3SlJcjP020O9l7tqRH7gHXksM9BvKcUSOdUR7BUnsZaUQRlFCu7tjixNyR5wEOHi+HVFVg/YtdyrXRbu3YPjYJnsBNPM0nmgJ7gGxG0My6QYd6tpNniWi3+ZB2+uMZc32wjATWKzfA3qM/PRguDtAPw6rgau1dQ33qc41r6EQV5Z2IE/yRe7mbUUqccIj5jvWbB79PLM3i2Q5leihXmRqJiRmi8IXfxyzBxyks7wrhh5isTIGTfveRWCZ/miglRKxWkXZR6VyST2HoaMAQ5RmtWNMesfo6d3hX8VraUgMR0fwX/43eLwhPtR6Aoy73whKUYLfYDBmJUZhXqiuJ47HbWv8D/xqAqtftEZieCXjIO0NjPaCM1jFNQHtByfZMTpbYq2Ut639WBGk5MDNbKhRhRIlMtFyMw+pFOpe+diirG70ZdKITGS5lkj1a2iYObrJxlF8W4xsZ1H7eIOa+t6FbR0TgPI8j1MJBOZ0jQPV85hgRID+kmzzup70m8vUJ6C/y5gXffF0UcabrhJuFeVnbBVg5a4kPudZ4/efci0QmpYqCie0xhpggbjfuMPjDIXGMG0Zz/ua6MKDnlTclVFywsdgfqy3WwzEXeN0UZosU88h5jV/X8ia5sk+fyEyuYDHqFq2nXJhZItauraKiPKTR9L48Xd9lkCHeDe+oBPorKpLK428X/TsavWtGavuHNTXiHe0hvY8Zx4vaE2ffaAZtsmNcn3yfqIxmTH+lTVEWY5igXO0N8Vdt6Y6IvD7RC6EE/qHc3C+l2Ax7Pa88tHcRj4W8SBNSSaUpLymXaYYZjNDLijymRLWVVHjMnNj0sKsVhO5/lbwmxmtu7leZEgVbytXuFLcSYNwBA+3p7XpD7awG3YxVEOWqsaqi9yqGZx9N0djj+AJwpqE9tBL5D7si0qbo/LnxgmFEQe6u8Ywi0d/u8QAUX1J8w901W+1ty+p8Yb0zHtszOnWVEPoIdKte7b1DMdLHxgVQpSTzlQdLWhhdG8vGYkfYAabS3cHqfs3DeF3gKbZa8QY7i9Xb7byuPZsBzZRD+XmcEGXgcr5WpHU9K6ReyeMiU7ye0komzfpmYIZyKXNnHPxJik9wn8J1W0RBI6I8rbHmrxNvDQZPzZR4geOBH/vzTA0VeZAXxQNF8jk98/Hdq4TlFvw5vc4KkywwwinikpooSuwZESDlL8lLmVOM3PdFbs2AlPsoDzEVaoHbcUw3Ki9LFTE64NMkq5TA69ICf5CSZkVAFj1WkUOnYns8yyvdIMJWfsCN0wPU7qC5T8bRj36M0/6OoX0ge+VzDR+2Db8c19GCbvSgBy1ifXS1lvas3WFuD1A7y9MWeD8AtTsUnT/EYU0wlqIrr/CVFju2PoYrHABcpj2EVMRrvh8sS3UNtwqx2ncYRRqTNBVsp/K0dxWecLRWYr6NmsSrRrRQH5+OynIuzyFk+5zIEvQzfI2fCKM3kUGuEWRvxoMb3GO4sxf5vG+eyCMWV+lBBvp0eTcwEKUinhF1Gzv84UPIK1AyOGS93LDLpvmMBytHLz5gEznksIks7vN5PbYhHxhvEewTAV2VmODgsC3iGAWE2MszMYbwKyLoceMvD4qYEwSBD5CaM9dieE0r3voluZW3LUEW+UyjF40DhGgFTBnWZ1UX80AsLzkaDG+AA5Caw4dkMZMN1vdJ9jMgDhevfbCk3uy3+vmz6ByjRZZEF6YH+i+iiD445kIMPnKmn3SAO3P4mGE0CRh3mEhTMsn2wJzcLs7W97t68UuXkclDjrN+nOVsYSvb2CquPqipOnWoQx2uo1kMB+gbnubPfv+IKd7/BlOBAQzy/E+wfL4jjxyOkwuUpSLlKEtFT0ZVyDSW0ogm1LcerXw+4y0+CvKvhefj73BK0ZX7uS3Of3dxkMlM5ECYNzSgIddSg4qUJIdDbONLljpdhrkYKZ1MVsTl7/ZymUKnoE9i/nimYSCzXJxhXn+xN5FugV4MikKEXYiUQANupiENqefDGM3nK1axkhWKm/3fegKk7pjO1VxFDSpQXlxhPcExjrGfXexQLjteSpfSpXQpXUrnM/0LgpsBoGFWC1EAAAAASUVORK5CYII=
+">
+<style>
+    body { margin: 0 }
+    select {
+        font-size: 16px;
+        padding: 5px;
+    }
+    .sheet-outer {
+        margin: 0;
+    }
+    .sheet {
+        margin: 0;
+        overflow: hidden;
+        position: relative;
+        box-sizing: border-box;
+        page-break-after: always;
+    }
+    .sheet-outer.A4 .sheet { 
+        width: 296mm; 
+        height: 210mm;
+    }
+    .sheet-outer.Letter .sheet { 
+        width: 11in; 
+        height: 8.5in;
+    }
+    .sheet.padding-5mm {
+        padding: 5mm;
+    }
+    thead th {
+        border-bottom-color: black;
+        border-bottom-style: solid;
+        border-bottom-width: 1px;
+    }
+    @media screen {
+        body { 
+            background: #e0e0e0 
+        }
+        .sheet {
+            background: white;
+            box-shadow: 0 .5mm 2mm rgba(0,0,0,.3); 
+            margin: 5mm auto;
+        }
+    }
+    @page {
+        size: A4 landscape;
+        margin: 0;
+    }
+    @media print {
+        /* Override the size */
+        .sheet-outer.A4 { 
+            width: 296mm;
+        }
+        .sheet-outer.Letter { 
+            width: 11in;
+        }
+        .noprint {
+            display: none;
+        }
+    }
+</style>
+<div class="noprint">
+    <label for="bambulab_store_country">Select a country:</label>
+    <select id="bambulab_store_country" onchange="country_selected()">
+        <option value="Asia">Asia</option>
+        <option value="Australia">🇦🇺 Australia</option>
+        <option value="Canada">🇨🇦 Canada</option>
+        <option value="Europe">🇪🇺 Europe</option>
+        <option value="Korea">🇰🇷 Korea</option>
+        <option value="Japan">🇯🇵 Japan</option>
+        <option value="UK">🇬🇧 UK</option>
+        <option value="USA">🇺🇸 USA</option>
+    </select>
+    <!-- <option value="australia" style="background-image: url('flags/australia.png');">Australia</option> -->
+</div>
+<div class="sheet-outer A4">
+    <section id="page1" class="sheet padding-5mm">
+    </section>
+    <section id="page2" class="sheet padding-5mm">
+        Content goes here.
+    </section>
+</div>
+
+<script>
+    function verify() {
+        for (const key in filaments) {
+            const actual_keys = Object.keys(filaments[key]);
+            const missing_keys = filament_data_keys.filter(k => !actual_keys.includes(k));
+            const extra_keys = actual_keys.filter(k => !filament_data_keys.includes(k));
+            if (missing_keys.length > 0 || extra_keys.length > 0) {
+                window.alert(
+                    `${key} doesn't have expected keys:\n` +
+                    `Expected: ${filament_data_keys.join(', ')}\n` +
+                    `Actual: ${actual_keys.join(', ')}\n` +
+                    `Missing: ${missing_keys.join(', ')}\n` +
+                    `Extra: ${extra_keys.join(', ')}`);
+            }
+        }
+    }
+    verify();
+
+    function append(element, tagname) {
+        return element.appendChild(document.createElement(tagname));
+    }
+
+    function country_selected() {
+        generate_tables(document.getElementById("bambulab_store_country").value);
+    }
+
+    function generate_tables(region) {
+        const p1 = document.getElementById("page1");
+        p1.innerHTML = "";        
+        const t = append(p1, "table");
+        const thead = append(t, "thead");
+        const tbody = append(t, "tbody");
+        let rows = {};
+        for (const i in filament_data_keys) {
+            const key = filament_data_keys[i];
+            const row = append(tbody, "tr");
+            rows[key] = row;
+            append(row, "th").innerText = key;
+        }
+        for (const filament_name in filaments) {
+            const filament = filaments[filament_name];
+            const th = append(thead, "th");
+            const a = append(th, "a");
+            a.href = "https://" + countries[region][1] + ".store.bambulab.com/products/" + filament["product_path"];
+            a.appendChild(document.createTextNode(filament_name));
+            for (const key in filament) {
+                append(rows[key], "td").innerText = filament[key];
+            }
+        }
+    }
+    document.getElementById("bambulab_store_country").value = "Canada";
+    generate_tables("Canada");
+</script>
