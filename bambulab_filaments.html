@@ -15,7 +15,6 @@
                 "USA": [23, 15],
             },
             "density": 1.24,
-            "heat_resistance": 57,
             "saturated_water": 0.43,
             "youngs_modulus_xy":  2580000000,
             "youngs_modulus_z":   2000000000,
@@ -27,18 +26,59 @@
             "bending_strength_z":   59000000,
             "impact_strength_xy": 26,
             "impact_strength_z": 13.8,
-            "uv_resistance": 2,
-            "drying_required": "false",
+            "resistance_heat": 57,
+            "resistance_uv": 2,
+            "drying_required": false,
             "compatibility_ams": true,
             "compatibility_ams_lite": true,
             "compatibility_liquid_glue": true,
             "compatibility_nozzle": "All",
             "compatibility_plates": ["cool", "hot", "textured"],
+            "abrasive": false,
             "layer_adhesion": 13.8,
             "max_print_speed": 300,
             "max_volumetric_flow": 21,
             "annealing": "55°C, 8h",
             "tds": "https://cdn.shopify.com/s/files/1/0645/5876/0155/files/Bambu_PLA_Basic_Technical_Data_Sheet.pdf"
+        },
+        "PLA Gradient": {
+            "product_path": "pla-basic-gradient",
+            "price": {
+                "Asia": [25, 0],
+                "Australia": [39, 0],
+                "Canada": [32, 0],
+                "Europe": [28, 0],
+                "Korea": [0, 0],
+                "Japan": [5580, 0],
+                "UK": [21, 14],
+                "USA": [25, 0],
+            },
+            "density": 1.24,
+            "saturated_water": 0.43,
+            "youngs_modulus_xy":  2580000000,
+            "youngs_modulus_z":   1980000000,
+            "tensile_strength_xy":  36000000,
+            "tensile_strength_z":   32000000,
+            "bending_modulus_xy": 2270000000,
+            "bending_modulus_z":  1990000000,
+            "bending_strength_xy":  73000000,
+            "bending_strength_z":   68000000,
+            "impact_strength_xy": 61.2,
+            "impact_strength_z": 23.8,
+            "resistance_heat": 57,
+            "resistance_uv": 2,
+            "drying_required": false,
+            "compatibility_ams": true,
+            "compatibility_ams_lite": true,
+            "compatibility_liquid_glue": true,
+            "compatibility_nozzle": "All",
+            "compatibility_plates": ["cool", "hot", "textured"],
+            "abrasive": false,
+            "layer_adhesion": 0,
+            "max_print_speed": 300,
+            "max_volumetric_flow": 21,
+            "annealing": "55°C, 8h",
+            "tds": "https://cdn.shopify.com/s/files/1/0584/7236/6216/files/Bambu_PLA_Basic_Gradient_Technical_Data_Sheet.pdf"
         },
         "PLA Matte": {
             "product_path": "pla-matte",
@@ -53,7 +93,6 @@
                 "USA": [23, 15],
             },
             "density": 1.31,
-            "heat_resistance": 58,
             "saturated_water": 0.43,
             "youngs_modulus_xy":  1960000000,
             "youngs_modulus_z":   1670000000,
@@ -65,13 +104,15 @@
             "bending_strength_z":   29000000,
             "impact_strength_xy": 19.2,
             "impact_strength_z": 6.6,
-            "uv_resistance": 2,
+            "resistance_heat": 58,
+            "resistance_uv": 2,
             "drying_required": false,
             "compatibility_ams": true,
             "compatibility_ams_lite": true,
             "compatibility_liquid_glue": true,
             "compatibility_nozzle": "All",
             "compatibility_plates": ["cool", "hot", "textured"],
+            "abrasive": false,
             "layer_adhesion": 13.8,
             "max_print_speed": 300,
             "max_volumetric_flow": 22,
@@ -89,6 +130,9 @@
 <link href="https://fonts.googleapis.com/css2?family=Noto+Colr+Emoji+Glyf" rel="stylesheet">
 <style>
     body { margin: 0 }
+    table {
+        font-size: 10px;
+    }
     thead th {
         border-bottom-color: black;
         border-bottom-style: solid;
@@ -104,6 +148,9 @@
         font-size: 16px;
         padding: 5px;
         font-family: "Noto Colr Emoji Glyf", sans-serif;
+    }
+    .green {
+        color: green;
     }
     .sheet-outer {
         margin: 0;
@@ -175,21 +222,30 @@
 </div>
 <script>
     const countries = {
-        "Asia": ["$USD", "asia", "A4"],
-        "Australia": ["$AUD", "ca", "A4"],
-        "Canada": ["$CAD", "au", "Letter"],
-        "Europe": ["€", "eu", "A4"],
-        "Korea": ["k₩", "kr", "A4"],
-        "Japan": ["¥", "jp", "A4"],
-        "UK": ["£", "uk", "A4"],
-        "USA": ["$USD", "us", "Letter"],
+        "Asia": ["$", "USD", "asia", "A4"],
+        "Australia": ["$", "AUS", "ca", "A4"],
+        "Canada": ["$", "CAD", "au", "Letter"],
+        "Europe": ["€", "EUR", "eu", "A4"],
+        "Korea": ["k₩", "KRW", "kr", "A4"],
+        "Japan": ["¥", "YEN", "jp", "A4"],
+        "UK": ["£", "GBP", "uk", "A4"],
+        "USA": ["$", "USD", "us", "Letter"],
     };
 
-    function formatArrayString(v) {
-        return document.createTextNode(v.join(", "));
+    function formatBooleanAbrasive(v) {
+        if (v) {
+            return document.createTextNode("⚙️");
+        }
+        return document.createTextNode("");
     }
-    function formatBoolean(v) {
-        return document.createTextNode(v.toString());
+    function formatBooleanGood(v) {
+        if (v) {
+            let node = document.createElement("span");
+            node.classList.add("green");
+            node.appendChild(document.createTextNode("✓"));
+            return node;
+        }
+        return document.createTextNode("");
     }
     function formatCelsius(v) {
         return document.createTextNode(v.toFixed(0) + "°C");
@@ -198,13 +254,17 @@
         return document.createTextNode(v.toFixed(2) + " g/cm³");
     }
     function formatDryingRequired(v) {
-        if (!v) {
-            return document.createTextNode("");
+        if (v) {
+            return document.createTextNode(v);
         }
-        return document.createTextNode(v);
+        return document.createTextNode("");
     }
     function formatEnergyPerArea(v) {
-        return document.createTextNode(v.toFixed(1) + " kj/m²");
+        let s = "";
+        if (v) {
+            s = v.toFixed(1) + " kj/m²";
+        }
+        return document.createTextNode(s);
     }
     function formatLinearSpeed(v) {
         return document.createTextNode(v.toFixed(0) + " mm/s");
@@ -221,12 +281,20 @@
         }
         return document.createTextNode(v + " Pa");
     }
+    function formatPlates(v) {
+        const m = {
+            "cool": "❄️",
+            "textured": "✨",
+            "hot": "🔥"
+        };
+        return document.createTextNode(v.map(item => m[item]).join(""));
+    }
     function formatPercent(v) {
         return document.createTextNode(v.toFixed(2) + "%");
     }
     function formatPrice(v) {
         const country = document.getElementById("bambulab_store_country").value;
-        return document.createTextNode(v[country][0] + " " + countries[country][0]);
+        return document.createTextNode(v[country][0] + " " + countries[country][0] + "/kg");
     }
     function formatURL(v) {
         const a = document.createElement("a");
@@ -247,16 +315,12 @@
     const filament_data_keys = {
         "product_path": null,
         "price": {
-            "en": "Price",
+            "en": "Unit price (MONEY)",
             "formator": formatPrice
         },
         "density": {
             "en": "Density",
             "formator": formatDensity
-        },
-        "heat_resistance": {
-            "en": "Heat resistance",
-            "formator": formatCelsius
         },
         "saturated_water": {
             "en": "Saturated water",
@@ -302,7 +366,11 @@
             "en": "Impact strength Z",
             "formator": formatEnergyPerArea
         },
-        "uv_resistance": {
+        "resistance_heat": {
+            "en": "Heat resistance",
+            "formator": formatCelsius
+        },
+        "resistance_uv": {
             "en": "UV resistance",
             "formator": formatUV
         },
@@ -312,15 +380,15 @@
         },
         "compatibility_ams": {
             "en": "AMS",
-            "formator": formatBoolean
+            "formator": formatBooleanGood
         },
         "compatibility_ams_lite": {
             "en": "AMS lite",
-            "formator": formatBoolean
+            "formator": formatBooleanGood
         },
         "compatibility_liquid_glue": {
             "en": "Liquid glue",
-            "formator": formatBoolean
+            "formator": formatBooleanGood
         },
         "compatibility_nozzle": {
             "en": "Nozzles",
@@ -328,7 +396,11 @@
         },
         "compatibility_plates": {
             "en": "Plates",
-            "formator": formatArrayString
+            "formator": formatPlates
+        },
+        "abrasive": {
+            "en": "Abrasive?",
+            "formator": formatBooleanAbrasive
         },
         "layer_adhesion": {
             "en": "Layer adhesion",
@@ -360,8 +432,6 @@
             if (missing_keys.length > 0 || extra_keys.length > 0) {
                 window.alert(
                     `${key} doesn't have expected keys:\n` +
-                    `Expected: ${Object.keys(filament_data_keys).join(', ')}\n` +
-                    `Actual: ${actual_keys.join(', ')}\n` +
                     `Missing: ${missing_keys.join(', ')}\n` +
                     `Extra: ${extra_keys.join(', ')}`);
             }
@@ -384,7 +454,7 @@
         const root = document.getElementById("root");
         root.classList.remove("A4");
         root.classList.remove("Letter");
-        root.classList.add(countries[country][2]);
+        root.classList.add(countries[country][3]);
         generate_tables(country);
     }
 
@@ -401,13 +471,13 @@
             if (info != null) { 
                 const row = append(tbody, "tr");
                 rows[key] = row;
-                append(row, "th").innerText = info["en"];
+                append(row, "th").innerText = info["en"].replace("MONEY", countries[region][1]);
             }
         }
         for (const filament_name in filaments) {
             const filament = filaments[filament_name];
             const th = append(thead, "th");
-            appendLink(th, "https://" + countries[region][1] + ".store.bambulab.com/products/" + filament["product_path"], filament_name);
+            appendLink(th, "https://" + countries[region][2] + ".store.bambulab.com/products/" + filament["product_path"], filament_name);
             for (const key in filament) {
                 const info = filament_data_keys[key];
                 if (info != null) { 
