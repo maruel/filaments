@@ -1,126 +1,4 @@
 <!DOCTYPE html>
-<script>
-    // https://docs.google.com/spreadsheets/d/1B-xYd8NSv7YMvTSY_9pu-ybffDbkbXwGCCEWE9-wv5Y/edit?gid=0#gid=0
-    const filaments = {
-        "PLA Basic": {
-            "product_path": "pla-basic-filament",
-            "price": {
-                "Asia": [23, 15],
-                "Australia": [36, 23],
-                "Canada": [30, 20],
-                "Europe": [26, 17],
-                "Korea": [33.000, 22.400],
-                "Japan": [3400, 2100],
-                "UK": [21, 14],
-                "USA": [23, 15],
-            },
-            "density": 1.24,
-            "saturated_water": 0.43,
-            "youngs_modulus_xy":  2580000000,
-            "youngs_modulus_z":   2000000000,
-            "tensile_strength_xy":  35000000,
-            "tensile_strength_z":   31000000,
-            "bending_modulus_xy": 2750000000,
-            "bending_modulus_z":  2370000000,
-            "bending_strength_xy":  75000000,
-            "bending_strength_z":   59000000,
-            "impact_strength_xy": 26,
-            "impact_strength_z": 13.8,
-            "resistance_heat": 57,
-            "resistance_uv": 2,
-            "drying_required": false,
-            "compatibility_ams": true,
-            "compatibility_ams_lite": true,
-            "compatibility_liquid_glue": true,
-            "compatibility_nozzle": "All",
-            "compatibility_plates": ["cool", "hot", "textured"],
-            "abrasive": false,
-            "layer_adhesion": 13.8,
-            "max_print_speed": 300,
-            "max_volumetric_flow": 21,
-            "annealing": "55°C, 8h",
-            "tds": "https://cdn.shopify.com/s/files/1/0645/5876/0155/files/Bambu_PLA_Basic_Technical_Data_Sheet.pdf"
-        },
-        "PLA Gradient": {
-            "product_path": "pla-basic-gradient",
-            "price": {
-                "Asia": [25, 0],
-                "Australia": [39, 0],
-                "Canada": [32, 0],
-                "Europe": [28, 0],
-                "Korea": [0, 0],
-                "Japan": [5580, 0],
-                "UK": [21, 14],
-                "USA": [25, 0],
-            },
-            "density": 1.24,
-            "saturated_water": 0.43,
-            "youngs_modulus_xy":  2580000000,
-            "youngs_modulus_z":   1980000000,
-            "tensile_strength_xy":  36000000,
-            "tensile_strength_z":   32000000,
-            "bending_modulus_xy": 2270000000,
-            "bending_modulus_z":  1990000000,
-            "bending_strength_xy":  73000000,
-            "bending_strength_z":   68000000,
-            "impact_strength_xy": 61.2,
-            "impact_strength_z": 23.8,
-            "resistance_heat": 57,
-            "resistance_uv": 2,
-            "drying_required": false,
-            "compatibility_ams": true,
-            "compatibility_ams_lite": true,
-            "compatibility_liquid_glue": true,
-            "compatibility_nozzle": "All",
-            "compatibility_plates": ["cool", "hot", "textured"],
-            "abrasive": false,
-            "layer_adhesion": 0,
-            "max_print_speed": 300,
-            "max_volumetric_flow": 21,
-            "annealing": "55°C, 8h",
-            "tds": "https://cdn.shopify.com/s/files/1/0584/7236/6216/files/Bambu_PLA_Basic_Gradient_Technical_Data_Sheet.pdf"
-        },
-        "PLA Matte": {
-            "product_path": "pla-matte",
-            "price": {
-                "Asia": [23, 15],
-                "Australia": [36, 23],
-                "Canada": [30, 20],
-                "Europe": [26, 17],
-                "Korea": [33.000, 22.400],
-                "Japan": [3400, 2100],
-                "UK": [21, 14],
-                "USA": [23, 15],
-            },
-            "density": 1.31,
-            "saturated_water": 0.43,
-            "youngs_modulus_xy":  1960000000,
-            "youngs_modulus_z":   1670000000,
-            "tensile_strength_xy":  30000000,
-            "tensile_strength_z":   22000000,
-            "bending_modulus_xy": 2360000000,
-            "bending_modulus_z":  1770000000,
-            "bending_strength_xy":  53000000,
-            "bending_strength_z":   29000000,
-            "impact_strength_xy": 19.2,
-            "impact_strength_z": 6.6,
-            "resistance_heat": 58,
-            "resistance_uv": 2,
-            "drying_required": false,
-            "compatibility_ams": true,
-            "compatibility_ams_lite": true,
-            "compatibility_liquid_glue": true,
-            "compatibility_nozzle": "All",
-            "compatibility_plates": ["cool", "hot", "textured"],
-            "abrasive": false,
-            "layer_adhesion": 13.8,
-            "max_print_speed": 300,
-            "max_volumetric_flow": 22,
-            "annealing": "55°C, 8h",
-            "tds": "https://cdn.shopify.com/s/files/1/0645/5876/0155/files/Bambu_PLA_Matte_Technical_Data_Sheet.pdf",
-        }
-    };
-</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Filaments sheet</title>
@@ -205,7 +83,7 @@
     <select id="bambulab_store_country" onchange="country_selected()">
         <option value="Asia">🌐 Asia</option>
         <option value="Australia">🇦🇺 Australia</option>
-        <option value="Canada">🇨🇦 Canada</option>
+        <option value="Canada" selected>🇨🇦 Canada</option>
         <option value="Europe">🇪🇺 Europe</option>
         <option value="Korea">🇰🇷 Korea</option>
         <option value="Japan">🇯🇵 Japan</option>
@@ -313,6 +191,9 @@
     }    
 
     const filament_data_keys = {
+        "brand": null,
+        "type": null,
+        "flavor": null,
         "product_path": null,
         "price": {
             "en": "Unit price (MONEY)",
@@ -424,9 +305,9 @@
         }
     };
 
-    function verify() {
-        for (const key in filaments) {
-            const actual_keys = Object.keys(filaments[key]);
+    function validate(data) {
+        for (const key in data) {
+            const actual_keys = Object.keys(data[key]);
             const missing_keys = Object.keys(filament_data_keys).filter(k => !actual_keys.includes(k));
             const extra_keys = actual_keys.filter(k => !Object.keys(filament_data_keys).includes(k));
             if (missing_keys.length > 0 || extra_keys.length > 0) {
@@ -437,8 +318,8 @@
             }
         }
     }
-    verify();
 
+    // HTML
     function append(element, tagname) {
         return element.appendChild(document.createElement(tagname));
     }
@@ -455,10 +336,11 @@
         root.classList.remove("A4");
         root.classList.remove("Letter");
         root.classList.add(countries[country][3]);
-        generate_tables(country);
+        // Reuse the global "filaments".
+        generate_tables(country, filaments);
     }
 
-    function generate_tables(region) {
+    function generate_tables(region, data) {
         const p1 = document.getElementById("page1");
         p1.innerHTML = "";        
         const t = append(p1, "table");
@@ -474,8 +356,8 @@
                 append(row, "th").innerText = info["en"].replace("MONEY", countries[region][1]);
             }
         }
-        for (const filament_name in filaments) {
-            const filament = filaments[filament_name];
+        for (const filament_name in data) {
+            const filament = data[filament_name];
             const th = append(thead, "th");
             appendLink(th, "https://" + countries[region][2] + ".store.bambulab.com/products/" + filament["product_path"], filament_name);
             for (const key in filament) {
@@ -487,7 +369,17 @@
         }
     }
 
-    // Reset with the best country of the world.
-    document.getElementById("bambulab_store_country").value = "Canada";
-    country_selected();
+    // https://docs.google.com/spreadsheets/d/1B-xYd8NSv7YMvTSY_9pu-ybffDbkbXwGCCEWE9-wv5Y/edit?gid=0#gid=0
+    // Cached data.
+    var filaments;
+    fetch('bambulab_filaments.json')
+        .then(response => response.json())
+        .then(data => {
+            validate(data);
+            // Save for when country is changed.
+            filaments = data;
+            // Update paper layout and generate tables.
+            country_selected();
+        })
+        .catch(error => console.error('Error fetching filaments:', error));
 </script>
