@@ -306,7 +306,7 @@
     };
 
     function validate(data) {
-        for (const key in data) {
+        for (const key in data["filaments"]) {
             const actual_keys = Object.keys(data[key]);
             const missing_keys = Object.keys(filament_data_keys).filter(k => !actual_keys.includes(k));
             const extra_keys = actual_keys.filter(k => !Object.keys(filament_data_keys).includes(k));
@@ -337,7 +337,7 @@
         root.classList.remove("Letter");
         root.classList.add(countries[country][3]);
         // Reuse the global "filaments".
-        generate_tables(country, filaments);
+        generate_tables(country, filaments_data["filaments"]);
     }
 
     function generate_tables(region, data) {
@@ -371,15 +371,16 @@
 
     // https://docs.google.com/spreadsheets/d/1B-xYd8NSv7YMvTSY_9pu-ybffDbkbXwGCCEWE9-wv5Y/edit?gid=0#gid=0
     // Cached data.
-    var filaments;
+    var filaments_data;
     fetch('bambulab_filaments.json')
         .then(response => response.json())
         .then(data => {
             validate(data);
             // Save for when country is changed.
-            filaments = data;
+            filaments_data = data;
             // Update paper layout and generate tables.
             country_selected();
         })
         .catch(error => console.error('Error fetching filaments:', error));
+
 </script>
